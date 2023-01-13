@@ -105,11 +105,12 @@ Computes the transition matrix A of an ndiff-fold integrator over the interval [
 function _transition_matrix_1d(ndiff::Integer, dt::T) where {T<:Real}
     irange = collect(0:ndiff)
     #g = @. δt^irange / factorial(irange)
-    g = @. exp( irange*log(dt) - logfactorial(irange) )
+    g = @. exp(irange*log(dt) - logfactorial(irange) )
     Φ = zeros(T, ndiff + one(ndiff), ndiff + one(ndiff))
-    @inbounds for m in 0:ndiff
-        idx = diagind(Φ, 0 - m)
-        Φ[idx] = fill(g[m+1], ndiff + 1 - m)
+    @simd ivdep for col in 0:ndiff
+        @simd ivdep for row in col:ndiff
+            @inbounds Φ[row+1, col+1] = g[row-col+1]
+        end
     end
 
     return Φ
