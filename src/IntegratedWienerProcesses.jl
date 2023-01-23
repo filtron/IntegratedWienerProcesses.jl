@@ -64,7 +64,7 @@ function state2diff_matrix_reverse(M::IWP{T}, m::Integer) where {T}
     nstates = ndiff(M) + 1
     C = zeros(T, 1, nstates)
     C[1, nstates-m] = one(T)
-    return kron(C, one(T)*I(dim(M)))
+    return kron(C, one(T) * I(dim(M)))
 end
 
 """
@@ -105,10 +105,10 @@ Computes the transition matrix A of an ndiff-fold integrator over the interval [
 function _transition_matrix_1d(ndiff::Integer, dt::T) where {T<:Real}
     irange = collect(0:ndiff)
     #g = @. δt^irange / factorial(irange)
-    g = @. exp(irange*log(dt) - logfactorial(irange) )
+    g = @. exp(irange * log(dt) - logfactorial(irange))
     Φ = zeros(T, ndiff + one(ndiff), ndiff + one(ndiff))
-    @simd ivdep for col in 0:ndiff
-        @simd ivdep for row in col:ndiff
+    @simd ivdep for col = 0:ndiff
+        @simd ivdep for row = col:ndiff
             @inbounds Φ[row+1, col+1] = g[row-col+1]
         end
     end
@@ -123,22 +123,25 @@ Computes the lower triangular Cholesky factor reachability Grammian of ndiff-fol
 This is the same as the IWP process noise for a transtion over [t, t+dt].
 """
 function _rgram_cholf_reverse_1d(ndiff::Integer, dt::T) where {T<:Real}
-    irange = collect(0:ndiff)
     L = zeros(T, ndiff + one(ndiff), ndiff + one(ndiff))
-
-    @inbounds for n in irange, m in 0:n
-        L[n+1, m+1] = one(T) / factorial(n - m) / factorial(n + m + 1)
+    @simd ivdep for n = 0:ndiff
+        something = sqrt(dt) * dt^n * factorial(n)
+        @simd ivdep for m = 0:ndiff
+            if m <= n
+                @inbounds L[n+1, m+1] =
+                    something * sqrt(2 * m + 1) / factorial(n - m) / factorial(n + m + 1)
+            end
+        end
     end
-
-    Λ = Diagonal(factorial.(irange))
-    S = sqrt(Diagonal(T(2) * irange .+ one(T)))
-    D = sqrt(dt) * Diagonal(dt .^ irange)
-    L1 = Λ * LowerTriangular(L) * S
-    L = D * L1
     return L
 end
 
 
-export IWP, ndiff, dim, ssparams_reverse, state2diff_matrix_reverse, transition_parameters_cholf_reverse
+export IWP,
+    ndiff,
+    dim,
+    ssparams_reverse,
+    state2diff_matrix_reverse,
+    transition_parameters_cholf_reverse
 
 end
