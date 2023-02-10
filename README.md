@@ -3,6 +3,8 @@
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://filtron.github.io/IntegratedWienerProcesses.jl/stable/)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://filtron.github.io/IntegratedWienerProcesses.jl/dev/)
 [![Build Status](https://github.com/filtron/IntegratedWienerProcesses.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/filtron/IntegratedWienerProcesses.jl/actions/workflows/CI.yml?query=branch%3Amain)
+[![Coverage](https://codecov.io/gh/filtron/IntegratedWienerProcesses.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/filtron/IntegratedWienerProcesses.jl)
+
 
 A package implementing tools for working with integrated Wiener processes. 
 A $\nu$-times integrated wiener process on the interval $[0, T]$ is given by 
