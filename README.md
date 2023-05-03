@@ -10,7 +10,7 @@ A package implementing tools for working with integrated Wiener processes.
 A $\nu$-times integrated wiener process on the interval $[0, T]$ is given by 
 
 $$
-y(t) = \sum_{k=0}^\nu y^{(k)}(0) \frac{t^k}{k!} + \int_0^t \frac{(t-\tau)^\nu}{\nu!} \operatorname{d} w(t), 
+y(t) = \sum_{k=0}^\nu y^{(k)}(0) \frac{t^k}{k!} + \int_0^t \frac{(t-\tau)^\nu}{\nu!} \mathrm{d} w(t), 
 $$
 
 where $y^{(k)}$ is the $k$:th derivative of $y \in \mathbb{R}^d$ and $w$ is a standard Wiener process on $\mathbb{R}^d$. 
@@ -18,7 +18,7 @@ Integrated Wiener processes admit state-space realizations according to
 
 $$
 \begin{align}
-\operatorname{d} x(t) &= A x(t) \operatorname{d} t + B \operatorname{d} w(t), \\ 
+\operatorname{d} x(t) &= A x(t) \operatorname{d} t + B \mathrm{d} w(t), \\ 
 y(t) &= C x(t). 
 \end{align}
 $$
