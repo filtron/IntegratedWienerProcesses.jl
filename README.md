@@ -18,7 +18,7 @@ Integrated Wiener processes admit state-space realizations according to
 
 $$
 \begin{align}
-\operatorname{d} x(t) &= A x(t) \operatorname{d} t + B \mathrm{d} w(t), \\ 
+\operatorname{d} x(t) &= A x(t) \mathrm{d} t + B \mathrm{d} w(t), \\ 
 y(t) &= C x(t). 
 \end{align}
 $$
