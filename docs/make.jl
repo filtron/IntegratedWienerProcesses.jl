@@ -22,4 +22,8 @@ makedocs(;
     pages = ["Home" => "index.md"],
 )
 
-deploydocs(; repo = "github.com/filtron/IntegratedWienerProcesses.jl", devbranch = "main")
+deploydocs(
+    repo = "github.com/filtron/IntegratedWienerProcesses.jl",
+    devbranch = "main",
+    push_preview = true,
+)
