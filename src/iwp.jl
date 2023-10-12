@@ -110,6 +110,21 @@ function transition_cov_cholf_1d(ndiff::Integer, dt::T, ::ReverseTaylor) where {
     return L
 end
 
+
+function transition_cov_cholf_precond_1d(ndiff::Integer, dt::T, ::ReverseTaylor) where {T}
+    L = zeros(T, ndiff + one(ndiff), ndiff + one(ndiff))
+    precond = @. sqrt(dt) * dt^(0:ndiff) / factorial(0:ndiff)
+    @simd ivdep for n = 0:ndiff
+        @simd ivdep for m = 0:ndiff
+            if m <= n
+                @inbounds L[n+1, m+1] =
+                    sqrt(2 * m + 1) * factorial(n)^2 / factorial(n - m) / factorial(n + m + 1)
+            end
+        end
+    end
+    return precond, L
+end
+
 """
     transition_cov(model::IWP{T}, dt::T, method::AbstractRealizationMethod) where {T}
 
