@@ -82,7 +82,7 @@ function transition_matrix_1d(ndiff::Integer, dt::T, ::ReverseTaylor) where {T<:
 end
 
 
-precond(ndiff::Integer, dt::Real, ::ReverseTaylor) =  @. sqrt(dt) * dt^(0:ndiff) / factorial(0:ndiff)
+precond(ndiff::Integer, dt::Real, ::ReverseTaylor) =  Diagonal(@. sqrt(dt) * dt^(0:ndiff) / factorial(0:ndiff))
 
 function transition_matrix_precond_1d(ndiff::Integer, T, ::ReverseTaylor)
     Φ = zeros(T, ndiff + one(ndiff), ndiff + one(ndiff))

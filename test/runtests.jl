@@ -39,8 +39,8 @@ using Test
             Φbreve = IntegratedWienerProcesses.transition_matrix_precond_1d(ndiff, Float64, ReverseTaylor()) 
             Lbreve = IntegratedWienerProcesses.transition_cov_cholf_precond_1d(ndiff, Float64, ReverseTaylor())
             
-            @test Φ ≈ Diagonal(prec) * Φbreve / Diagonal(prec)
-            @test L ≈ Diagonal(prec) * Lbreve
+            @test Φ ≈ prec * Φbreve / prec
+            @test L ≈ prec * Lbreve
         end
     end
 
