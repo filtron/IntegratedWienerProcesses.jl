@@ -31,5 +31,18 @@ using Test
 
     end
 
+    @testset "preconditioning" begin 
+        for ndiff = 0:9
+            Φ = IntegratedWienerProcesses.transition_matrix_1d(ndiff, dt, ReverseTaylor())
+            L = IntegratedWienerProcesses.transition_cov_cholf_1d(ndiff, dt, ReverseTaylor())
+            prec = IntegratedWienerProcesses.precond(ndiff, dt, ReverseTaylor())
+            Φbreve = IntegratedWienerProcesses.transition_matrix_precond_1d(ndiff, Float64, ReverseTaylor()) 
+            Lbreve = IntegratedWienerProcesses.transition_cov_cholf_precond_1d(ndiff, Float64, ReverseTaylor())
+            
+            @test Φ ≈ prec * Φbreve / prec
+            @test L ≈ prec * Lbreve
+        end
+    end
+
 
 end

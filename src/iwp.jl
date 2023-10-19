@@ -64,10 +64,10 @@ function transition_matrix(
     method::AbstractRealizationMethod,
 ) where {T}
     V = promote_type(real(T), typeof(dt))
-    return kron(_transition_matrix_1d(ndiff(model), V(dt), method), one(T)I(dim(model)))
+    return kron(transition_matrix_1d(ndiff(model), V(dt), method), one(T)I(dim(model)))
 end
 
-function _transition_matrix_1d(ndiff::Integer, dt::T, ::ReverseTaylor) where {T<:Real}
+function transition_matrix_1d(ndiff::Integer, dt::T, ::ReverseTaylor) where {T<:Real}
     irange = collect(0:ndiff)
     #g = @. δt^irange / factorial(irange)
     g = @. exp(irange * log(dt) - logfactorial(irange))
@@ -80,6 +80,20 @@ function _transition_matrix_1d(ndiff::Integer, dt::T, ::ReverseTaylor) where {T<
 
     return Φ
 end
+
+
+precond(ndiff::Integer, dt::Real, ::ReverseTaylor) =  Diagonal(@. sqrt(dt) * dt^(0:ndiff) / factorial(0:ndiff))
+
+function transition_matrix_precond_1d(ndiff::Integer, T, ::ReverseTaylor)
+    Φ = zeros(T, ndiff + one(ndiff), ndiff + one(ndiff))
+    @simd ivdep for col = 0:ndiff
+        @simd ivdep for row = col:ndiff
+            @inbounds Φ[row+1, col+1] = binomial(row, col)
+        end
+    end
+    return Φ
+end
+
 
 
 """
@@ -104,6 +118,20 @@ function transition_cov_cholf_1d(ndiff::Integer, dt::T, ::ReverseTaylor) where {
             if m <= n
                 @inbounds L[n+1, m+1] =
                     something * sqrt(2 * m + 1) / factorial(n - m) / factorial(n + m + 1)
+            end
+        end
+    end
+    return L
+end
+
+
+function transition_cov_cholf_precond_1d(ndiff::Integer, T, ::ReverseTaylor)
+    L = zeros(T, ndiff + one(ndiff), ndiff + one(ndiff))
+    @simd ivdep for n = 0:ndiff
+        @simd ivdep for m = 0:ndiff
+            if m <= n
+                @inbounds L[n+1, m+1] =
+                    sqrt(2 * m + 1) * factorial(n)^2 / factorial(n - m) / factorial(n + m + 1)
             end
         end
     end
