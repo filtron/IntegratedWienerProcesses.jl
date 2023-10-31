@@ -125,7 +125,7 @@ function transition_cov_cholf_1d(ndiff::Integer, dt::T, ::ReverseTaylor) where {
 end
 
 
-function transition_cov_cholf_precond_1d(ndiff::Integer, T, ::ReverseTaylor)
+function transition_cov_cholf_precond_1d(ndiff::Integer, ::Type{T}, ::ReverseTaylor) where {T}
     L = zeros(T, ndiff + one(ndiff), ndiff + one(ndiff))
     @simd ivdep for n = 0:ndiff
         @simd ivdep for m = 0:ndiff
